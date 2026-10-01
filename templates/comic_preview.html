@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Your Comic Preview - ComicCraft</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}" />
+
+    <style>
+      .preview-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 20px 60px;
+      }
+
+      .preview-header {
+        text-align: center;
+        margin-bottom: 35px;
+      }
+
+      .preview-header h1 {
+        margin-bottom: 10px;
+      }
+
+      .preview-header p {
+        color: #666;
+      }
+
+      .comic-panel {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e7eb;
+      }
+
+      .comic-panel h2 {
+        margin-top: 0;
+        margin-bottom: 15px;
+      }
+
+      .panel-number {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: #2563eb;
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .comic-image {
+        width: 100%;
+        max-width: 900px;
+        display: block;
+        margin: 0 auto 20px;
+        border-radius: 12px;
+        border: 1px solid #ddd;
+      }
+
+      .scene-description {
+        font-style: italic;
+        color: #555;
+        margin-bottom: 18px;
+      }
+
+      .comic-text {
+        line-height: 1.7;
+      }
+
+      .comic-text strong {
+        color: #111827;
+      }
+
+      .empty-message {
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        color: #9a3412;
+        padding: 25px;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 35px;
+      }
+
+      .btn {
+        display: inline-block;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        padding: 13px 22px;
+        border-radius: 8px;
+        background: #2563eb;
+        color: white;
+        font-weight: 700;
+        transition: 0.2s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        opacity: 0.92;
+      }
+
+      .download-btn {
+        background: #16a34a;
+      }
+
+      .download-btn:hover {
+        background: #15803d;
+      }
+
+      .new-comic-btn {
+        background: #4b5563;
+      }
+
+      @media (max-width: 700px) {
+        .preview-page {
+          padding: 25px 12px 40px;
+        }
+
+        .comic-panel {
+          padding: 14px;
+        }
+
+        .actions {
+          flex-direction: column;
+        }
+
+        .actions .btn {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="preview-page">
+      <!-- HEADER -->
+      <header class="preview-header">
+        <h1>🎨 Your Comic Preview</h1>
+
+        <p>Your AI-generated ComicCraft story is ready!</p>
+      </header>
+
+      <!-- EMPTY LAYOUT MESSAGE -->
+
+      {% if not layout %}
+
+      <div class="empty-message">
+        <h2>⚠️ No comic panels were generated</h2>
+
+        <p>
+          The preview page loaded correctly, but the backend did not send any
+          comic panels.
+        </p>
+
+        <p>
+          Please check the terminal running Uvicorn for the generation error.
+        </p>
+      </div>
+
+      {% endif %}
+
+      <!-- COMIC PANELS -->
+
+      {% for panel in layout %}
+
+      <section class="comic-panel">
+        <div class="panel-number">Panel {{ panel.panel_number }}</div>
+
+        <h2>{{ panel.title }}</h2>
+
+        <!-- IMAGE -->
+
+        {% if panel.image_path %}
+
+        <img
+          src="{{ panel.image_path }}"
+          alt="Comic panel {{ panel.panel_number }}"
+          class="comic-image"
+        />
+
+        {% else %}
+
+        <div class="empty-message">Image was not generated for this panel.</div>
+
+        {% endif %}
+
+        <!-- SCENE DESCRIPTION -->
+
+        {% if panel.scene_description %}
+
+        <p class="scene-description">{{ panel.scene_description }}</p>
+
+        {% endif %}
+
+        <!-- CAPTION -->
+
+        {% if panel.caption %}
+
+        <div class="comic-text">
+          <p>
+            <strong>CAPTION:</strong>
+            {{ panel.caption }}
+          </p>
+        </div>
+
+        {% endif %}
+
+        <!-- NARRATION -->
+
+        {% if panel.narration %}
+
+        <div class="comic-text">
+          <p>
+            <strong>NARRATION:</strong>
+            {{ panel.narration }}
+          </p>
+        </div>
+
+        {% endif %}
+
+        <!-- DIALOGUE -->
+
+        {% if panel.dialogue %}
+
+        <div class="comic-text">
+          <p>
+            <strong>DIALOGUE:</strong>
+            {{ panel.dialogue }}
+          </p>
+        </div>
+
+        {% endif %}
+      </section>
+
+      {% endfor %}
+
+      <!-- BUTTONS -->
+
+      <div class="actions">
+        {% if pdf_url %}
+
+        <a href="{{ pdf_url }}" class="btn download-btn" download>
+          📄 Download Comic PDF
+        </a>
+
+        {% endif %}
+
+        <a href="/" class="btn new-comic-btn"> ← Generate New Comic </a>
+      </div>
+    </main>
+  </body>
+</html>
